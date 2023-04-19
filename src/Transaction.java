@@ -3,28 +3,52 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class Transaction implements Comparable<Transaction>{
+public class Transaction {
     Customer customer;
     LoyaltyCard loyaltyCard;
     Set<Item> items;
-    Set<Offer> offers;
+
     //Item, Quantity
     ShoppingCart cart;
 
 
     /**
+     * Create a new Transaction
      * @param customer the customer making the transaction
      * @param loyaltyCard the customers loyalty card
      * @param items a set of all items available to purchase
      * @param offers a set of all offers currently available
      */
-    public Transaction(Customer customer, LoyaltyCard loyaltyCard, Set<Item> items, Set<Offer> offers){
+    public Transaction(Customer customer, LoyaltyCard loyaltyCard, Set<Item> items{
         this.customer = customer;
         this.loyaltyCard = loyaltyCard;
         this.items = items;
-        this.offers = offers;
         cart = new ShoppingCart();
+        startShopping();
     }
+
+    /**
+     *
+     */
+    //User Interaction
+    public void startShopping(){
+        System.out.print("Welcome, " + customer.getName() + "! What would you like to do?%n");
+        if (getCartMap().isEmpty()){
+            System.out.printf("1: Add items to cart %n");
+            System.out.printf("2: View Catalog n%");
+            System.out.printf("3: Log Out %n");
+        }
+
+        else{
+            System.out.printf("1: Add items to cart %n");
+            System.out.printf("2: View Catalog n%");
+            View
+
+        }
+
+    }
+
+    //Basic Setters And Getters
 
     /**
      * @return customer
@@ -33,12 +57,6 @@ public class Transaction implements Comparable<Transaction>{
         return customer;
     }
 
-    /**
-     * @param customer
-     */
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
 
     /**
      * @return loyaltyCard
@@ -47,12 +65,6 @@ public class Transaction implements Comparable<Transaction>{
         return loyaltyCard;
     }
 
-    /**
-     * @param loyaltyCard
-     */
-    public void setLoyaltyCard(LoyaltyCard loyaltyCard) {
-        this.loyaltyCard = loyaltyCard;
-    }
 
     /**
      * @return items all items available for purchase
@@ -69,25 +81,14 @@ public class Transaction implements Comparable<Transaction>{
     }
 
     /**
-     * @return offers
+     * Get a map of the the items the customer wants to purchase and the quantity of each item
+     * @return cart.getCart The cart as a map
      */
-    public Set<Offer> getOffers() {
-        return offers;
+    public Map<Item, Integer> getCartMap() {
+        return cart.getCart();
     }
 
-    /**
-     * @param offers
-     */
-    public void setOffers(Set<Offer> offers) {
-        this.offers = offers;
-    }
-
-    /**
-     * @return shoppingCart A map the items the customer wants to purchase. Item is the item and Integer is the quantity of that item
-     */
-    public ShoppingCart getShoppingCart() {
-        return cart;
-    }
+    //Interactions with cart
 
     /**
      * Add an item to the shoppingCart.
@@ -99,12 +100,8 @@ public class Transaction implements Comparable<Transaction>{
     public boolean addToCart(Item item, int quantity) {
         if (!items.contains(item))
             return false;
-        if (shoppingCart.containsKey(item)){
-            shoppingCart.put(item, quantity + shoppingCart.get(item));
-            return true;
-        }
         else {
-            shoppingCart.put(item, quantity);
+            cart.addToCart(item, quantity);
             return true;
         }
     }
@@ -115,11 +112,11 @@ public class Transaction implements Comparable<Transaction>{
      * @return true if removed successfully, else returns false
      */
     public boolean removeFromCart(Item item){
-        if (!shoppingCart.containsKey(item)){
+        if (!cart.isInCart(item)){
             return false;
         }
         else {
-            shoppingCart.remove(item);
+            cart.removeFromCart(item);
             return true;
         }
     }
@@ -131,31 +128,22 @@ public class Transaction implements Comparable<Transaction>{
      * @return true if removed successfully, else returns false
      */
     public boolean removeFromCart(Item item, int quantity){
-        if (!shoppingCart.containsKey(item)){
+        if (!cart.isInCart(item)){
             return false;
         }
         else {
-            if (shoppingCart.get(item) < quantity){
-                shoppingCart.put(item, shoppingCart.get(item) - quantity);
-            }
-            else {
-                shoppingCart.remove(item);
-            }
+            cart.removeFromCart(item, quantity);
             return true;
         }
     }
 
+    //checkout
+
     /**
      * call Payment to checkout
      */
-    public void checkout(){
-        Payment.
+    public void checkout(Customer customer, LoyaltyCard loyaltyCard, ShoppingCart cart){
+//        Payment.
     }
 
-    @Override
-    public int compareTo(Transaction o) {
-        if(shoppingCart.equals(o.shoppingCart)){
-            return 0;
-        }
-    }
 }
