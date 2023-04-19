@@ -19,14 +19,14 @@ public class Item {
     /**
      * @return itemName
      */
-    public String getItemName() {
+    public String getName() {
         return itemName;
     }
 
     /**
      * @param name
      */
-    public void setItemName(String name) {
+    public void setName(String name) {
         this.itemName = name;
     }
 
