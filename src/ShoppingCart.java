@@ -12,7 +12,7 @@ public class ShoppingCart{
      * Create a new shopping cart
      */
     public ShoppingCart(){
-        cart = new HashMap<>();
+        cart = new TreeMap<>();
     }
 
     /**
@@ -29,7 +29,6 @@ public class ShoppingCart{
             cart.put(item, quantity);
         }
     }
-
 
     /**
      * Remove an item from the shopping cart

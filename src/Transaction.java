@@ -1,14 +1,11 @@
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
-import java.util.TreeMap;
 
 public class Transaction {
     Customer customer;
     LoyaltyCard loyaltyCard;
-    Set<Item> items;
-
-    //Item, Quantity
+    ArrayList<Item> catalog;
     ShoppingCart cart;
 
 
@@ -17,38 +14,85 @@ public class Transaction {
      * @param customer the customer making the transaction
      * @param loyaltyCard the customers loyalty card
      * @param items a set of all items available to purchase
-     * @param offers a set of all offers currently available
      */
-    public Transaction(Customer customer, LoyaltyCard loyaltyCard, Set<Item> items{
+    public Transaction(Customer customer, LoyaltyCard loyaltyCard, Set<Item> items){
+        for (Item item: items) {
+            this.catalog.add(item);
+        }
         this.customer = customer;
         this.loyaltyCard = loyaltyCard;
-        this.items = items;
+
         cart = new ShoppingCart();
         startShopping();
     }
 
     /**
-     *
+     * Customer Interaction Menu
      */
-    //User Interaction
     public void startShopping(){
+        boolean loggedIn = true;
+        Scanner in = new Scanner(System.in);
         System.out.print("Welcome, " + customer.getName() + "! What would you like to do?%n");
-        if (getCartMap().isEmpty()){
-            System.out.printf("1: Add items to cart %n");
-            System.out.printf("2: View Catalog n%");
-            System.out.printf("3: Log Out %n");
+
+        while (loggedIn) {
+            int menuChoice = 0;
+
+            if (cart.getCart().isEmpty()){
+                System.out.printf("1: Add items to cart %n");
+                System.out.printf("2: View Catalog n%");
+                System.out.printf("3: Quit %n");
+                if (in.hasNextInt()) {
+                    menuChoice = in.nextInt();
+                }
+                switch (menuChoice) {
+                    case 1: //Add to Cart
+                        addToCart();
+                        break;
+                    case 2: //View Catalog
+                        printCatalog();
+                    case 3: //Quit
+                        loggedIn = false;
+                        break;
+                    default:
+                        System.out.println("Invalid Choice, please try again");
+                }
+            }
+            else {
+                System.out.printf("1: Add items to cart %n");
+                System.out.printf("2: View Catalog n%");
+                System.out.printf("3: View Cart %n");
+                System.out.printf("4: Remove item from cart %n");
+                System.out.printf("5: Proceed to Checkout %n");
+                System.out.printf("6: Quit %n");
+                if (in.hasNextInt()) {
+                    menuChoice = in.nextInt();
+                }
+                switch (menuChoice) {
+                    case 1: //Add to Cart
+                        addToCart();
+                        break;
+                    case 2: //View Catalog
+                        printCatalog();
+                    case 3: //view cart
+                        viewCart();
+                        break;
+                    case 4: //remove item
+                        removeFromCart();
+                        break;
+                    case 5: //Checkout (incomplete)
+                        checkout();
+                        break;
+                    case 6: //Quit
+                        loggedIn = false;
+                        break;
+                    default:
+                        System.out.println("Invalid Choice, please try again");
+                }
+            }
         }
-
-        else{
-            System.out.printf("1: Add items to cart %n");
-            System.out.printf("2: View Catalog n%");
-            View
-
-        }
-
     }
 
-    //Basic Setters And Getters
+    //Basic Getters
 
     /**
      * @return customer
@@ -56,7 +100,7 @@ public class Transaction {
     public Customer getCustomer() {
         return customer;
     }
-
+    //done
 
     /**
      * @return loyaltyCard
@@ -64,86 +108,107 @@ public class Transaction {
     public LoyaltyCard getLoyaltyCard() {
         return loyaltyCard;
     }
-
-
-    /**
-     * @return items all items available for purchase
-     */
-    public Set<Item> getItems() {
-        return items;
-    }
+    //done
 
     /**
-     * @param items
+     * Print the catalog
      */
-    public void setItems(Set<Item> items) {
-        this.items = items;
-    }
-
-    /**
-     * Get a map of the the items the customer wants to purchase and the quantity of each item
-     * @return cart.getCart The cart as a map
-     */
-    public Map<Item, Integer> getCartMap() {
-        return cart.getCart();
+    //done
+    public void printCatalog() {
+        int i = 0;
+        for (Item item: catalog) {
+            System.out.printf("%3d:   %30s    %7.2f", i, item.getName(), item.getPrice());
+            i++;
+        }
     }
 
     //Interactions with cart
 
     /**
-     * Add an item to the shoppingCart.
+     * Add items to the shoppingCart.
      * If the item is already in the cart, adds more of the item
-     * @param item the item to be added to the cart
-     * @param quantity the quantity of the item to be added
-     * @return true if added successfully, else returns false
      */
-    public boolean addToCart(Item item, int quantity) {
-        if (!items.contains(item))
-            return false;
-        else {
-            cart.addToCart(item, quantity);
-            return true;
+    public void addToCart() {
+        System.out.println("Add items to your cart");
+        Scanner in = new Scanner(System.in);
+        boolean addMore = true;
+        while (addMore) {
+            int choice =  -2;
+            System.out.println("Enter the catalog number of the item to add, or enter \"-1\" to quit:");
+            if (in.hasNextInt()) {
+                choice = in.nextInt();
+            }
+            if (choice == -1) {
+                addMore = false;
+            }
+            else if (choice < -1 || choice >= catalog.size()) {
+                System.out.println("Invalid choice, please try again");
+            }
+            else {
+                Item item = catalog.get(choice);
+                int quantity = 0;
+                do{
+                    System.out.println("how many would you like?");
+                    if (in.hasNextInt()) {
+                        quantity = in.nextInt();
+                        cart.addToCart(item, quantity);
+                    }
+                    else {
+                        System.out.println("Invalid Number, please try again");
+                    }
+                }
+                while (quantity == 0);
+            }
         }
     }
-
-    /**
-     * Remove an item from the shopping cart
-     * @param item the item to be removed
-     * @return true if removed successfully, else returns false
-     */
-    public boolean removeFromCart(Item item){
-        if (!cart.isInCart(item)){
-            return false;
-        }
-        else {
-            cart.removeFromCart(item);
-            return true;
-        }
-    }
+    //done
 
     /**
      * Removes a given quantity of an item from the shopping cart
-     * @param item the item to remove
-     * @param quantity the quantity of the item to remove
-     * @return true if removed successfully, else returns false
      */
-    public boolean removeFromCart(Item item, int quantity){
-        if (!cart.isInCart(item)){
-            return false;
+    public boolean removeFromCart(){
+        Scanner in = new Scanner(System.in);
+        viewCart();
+        int choice = -1;
+        System.out.print("Enter the number of the item you want to remove: ");
+        do {
+            if (in.hasNextInt()){
+                choice = in.nextInt();
+            }
+            if (choice < 0 || choice >= cart.getCart().size()){
+                System.out.println("Invalid option, please try again.");
+            }
+
+            else {
+                cart.getCart().get(cart.getCart().keySet());
+                cart.removeFromCart(item, quantity);
+            }
         }
-        else {
-            cart.removeFromCart(item, quantity);
-            return true;
+        while ();
+
+    }
+
+    /**
+     * View Contents of cart
+     */
+    public void viewCart() {
+        System.out.printf("Your Cart%n#    Item Name                     Quantity%n");
+        int i = 0;
+        for(Item key: cart.getCart().keySet()) {
+            System.out.printf("%3d: %30s     %3d", i, key.getName(), cart.getCart().get(key));
         }
     }
+    //done
+
+
 
     //checkout
 
     /**
-     * call Payment to checkout
+     * call Payment to start checkout
      */
     public void checkout(Customer customer, LoyaltyCard loyaltyCard, ShoppingCart cart){
-//        Payment.
+//        Pa
     }
 
 }
